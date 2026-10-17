@@ -55,7 +55,7 @@ if (cp) {
   // 2026-10-17); only its strict validator warns. "icon" stays out: the icon is .claude-plugin/icon.png.
   if ("icon" in cp) err(".claude-plugin/plugin.json", "use .claude-plugin/icon.png instead of an icon key");
   for (const k of ["privacyPolicyUrl", "termsOfServiceUrl", "supportUrl", "documentationUrl"]) {
-    if (k in cp && !/^https://www.creatorscompanion.app//.test(cp[k])) err(".claude-plugin/plugin.json", `${k} must be a www.creatorscompanion.app URL`);
+    if (k in cp && !String(cp[k]).startsWith("https://www.creatorscompanion.app/")) err(".claude-plugin/plugin.json", `${k} must be a www.creatorscompanion.app URL`);
   }
 }
 if (mk && cp) {
