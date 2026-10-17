@@ -1,0 +1,18 @@
+{
+  "name": "creatorscompanion",
+  "description": "The CreatorsCompanion plugin: social content in your own voice, inside Claude.",
+  "owner": {
+    "name": "CreatorsCompanion",
+    "email": "support@creatorscompanion.app",
+    "url": "https://www.creatorscompanion.app"
+  },
+  "plugins": [
+    {
+      "name": "creatorscompanion",
+      "source": "./",
+      "description": "Write social posts, scripts and newsletters in your own voice with your CreatorsCompanion account.",
+      "category": "productivity",
+      "tags": ["content", "social-media", "creator"]
+    }
+  ]
+}

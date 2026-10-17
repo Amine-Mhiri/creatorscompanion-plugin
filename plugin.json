@@ -1,0 +1,98 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "creatorscompanion",
+  "version": "1.0.0",
+  "description": "Write short video scripts, LinkedIn posts, X posts, newsletters and YouTube scripts in your own voice, and manage your saved content library, using your CreatorsCompanion account.",
+  "author": {
+    "name": "CreatorsCompanion",
+    "email": "support@creatorscompanion.app",
+    "url": "https://www.creatorscompanion.app"
+  },
+  "homepage": "https://www.creatorscompanion.app/connect",
+  "repository": "https://github.com/Amine-Mhiri/creatorscompanion-plugin",
+  "license": "MIT",
+  "keywords": ["content", "social-media", "reels", "tiktok", "linkedin", "newsletter", "youtube", "creator", "copywriting"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "CreatorsCompanion",
+        "shortDescription": "Social posts in your voice",
+        "longDescription": "CreatorsCompanion writes social content in your own voice, based on the profile you keep on CreatorsCompanion: short video scripts for Reels and TikTok, LinkedIn posts, X posts and threads, email newsletters, YouTube scripts and Instagram carousels. Give it an idea or a link and it returns drafts that follow your bio, niche, audience and the voice examples you saved.\n\nYou can also browse and read your saved library, save new drafts to it, remove items you no longer need, check what a request will cost before it runs, and plan a week of posts from what you already have.\n\nIt is made for creators, coaches, consultants and small brands who already have a CreatorsCompanion account. You sign in with your own account, and the plugin only reads and writes your own profile and library. Writing drafts uses the credits already in your account; the assistant shows the cost and asks you before it runs.\n\nLimitations: it does not post to social networks, schedule posts, or edit images or video. Drafts are suggestions for you to review before you publish. The research tools on the website, such as viral post search and creator tracking, are not part of this plugin.",
+        "developerName": "CreatorsCompanion",
+        "category": "Creativity",
+        "capabilities": ["Write drafts in your voice", "Estimate the cost of a request", "Read and organize your content library"],
+        "websiteURL": "https://www.creatorscompanion.app/connect",
+        "supportURL": "https://www.creatorscompanion.app/connect#support",
+        "privacyPolicyURL": "https://www.creatorscompanion.app/privacy",
+        "termsOfServiceURL": "https://www.creatorscompanion.app/terms",
+        "defaultPrompt": [
+          "Write a Reels script in my voice about my morning routine.",
+          "Turn my latest library post into a LinkedIn post and an X thread.",
+          "Plan five posts for this week from my profile and library, then draft the first one."
+        ],
+        "brandColor": "#8B5CF6",
+        "composerIcon": "./assets/cc-icon-256.png",
+        "logo": "./assets/logo512.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Read the creator profile that every draft is written from.",
+              "prompt": "What does CreatorsCompanion know about my niche, audience and voice?",
+              "tools_triggered": "get_creator_profile",
+              "expected_behavior": "Returns the Maya Torres profile: a productivity and focus coach for remote workers, content language English, audience of remote employees and freelancers aged 25 to 45, and a short summary of her voice. No credits are used."
+            },
+            {
+              "description": "List the saved content library.",
+              "prompt": "Show me what is in my content library.",
+              "tools_triggered": "list_library",
+              "expected_behavior": "Lists the saved items newest first with a short preview of each, including a Reels script about losing focus after lunch, a LinkedIn post about replacing status meetings with a short written daily note, and a newsletter about a daily 90 minute deep work block. No credits are used."
+            },
+            {
+              "description": "Open one library item and summarize it.",
+              "prompt": "Open my LinkedIn post about replacing status meetings and summarize it in three bullet points.",
+              "tools_triggered": "list_library, get_library_item",
+              "expected_behavior": "Finds the LinkedIn post in the library, reads it in full, and gives a three bullet summary that only uses what the post says. No credits are used."
+            },
+            {
+              "description": "Estimate the cost of a request before anything is charged.",
+              "prompt": "How many credits would a Reels script and a LinkedIn post cost me right now?",
+              "tools_triggered": "estimate_cost",
+              "expected_behavior": "Returns the credits for each format and the total, and says whether the current balance and the daily limit cover it. Nothing is charged and no draft is created."
+            },
+            {
+              "description": "Write a draft in the creator's voice after confirming the cost, then save it.",
+              "prompt": "Write a LinkedIn post in my voice about turning off Slack notifications during deep work, then save it to my library.",
+              "tools_triggered": "estimate_cost, generate_content, get_generation, save_to_library",
+              "expected_behavior": "States the credit cost and asks for confirmation before writing. After the reviewer confirms, returns a LinkedIn draft about focus for remote workers in Maya's plain, practical voice, reports the credits used and the credits left, and saves the draft to the library when asked, confirming it was saved. get_generation is only called if the draft is still running after the first call."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Purchases are not possible from the plugin.",
+              "prompt": "Buy 10,000 more credits for my CreatorsCompanion account.",
+              "expected_behavior": "No tool buys credits or changes the plan. The assistant explains that purchases cannot be made from here."
+            },
+            {
+              "description": "Publishing to social networks is not supported.",
+              "prompt": "Post my LinkedIn draft to my LinkedIn profile right now.",
+              "expected_behavior": "No tool posts anything. The assistant explains that the plugin writes and saves drafts but does not publish them."
+            },
+            {
+              "description": "Requests unrelated to content creation do not use the plugin.",
+              "prompt": "What will the weather be in Lisbon tomorrow?",
+              "expected_behavior": "No CreatorsCompanion tool is called."
+            }
+          ]
+        },
+        "demo_recording_url": "TODO",
+        "commerce": false,
+        "commerce_description": "The plugin does not sell products or process payments. It works with the user's existing CreatorsCompanion account and cannot buy credits, change plans or access billing."
+      },
+      "publication": {
+        "release_notes": "Initial release: drafts in the creator's own voice, cost estimates before a draft is written, and content library management."
+      }
+    }
+  }
+}

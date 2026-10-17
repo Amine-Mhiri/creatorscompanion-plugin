@@ -1,0 +1,10 @@
+{
+  "name": "creatorscompanion",
+  "version": "1.0.0",
+  "description": "Write social posts, scripts and newsletters in your own voice with your CreatorsCompanion account.",
+  "mcpServers": {
+    "creatorscompanion": {
+      "httpUrl": "https://www.creatorscompanion.app/mcp"
+    }
+  }
+}
