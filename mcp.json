@@ -3,7 +3,7 @@
   "mcpServers": {
     "creatorscompanion": {
       "type": "streamable-http",
-      "url": "https://www.creatorscompanion.app/mcp/chatgpt"
+      "url": "https://www.creatorscompanion.app/mcp"
     }
   }
 }

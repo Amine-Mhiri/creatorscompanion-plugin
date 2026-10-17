@@ -4,8 +4,10 @@
 // Usage: node scripts/build-openai-zip.mjs
 //
 // The ZIP holds the plugin root directly (plugin.json at the top of the archive), with only the
-// files that package needs: the Agent Plugins manifest and MCP config, the two skills that work
-// with the reduced /mcp/chatgpt tool set, the icons the manifest references and the license.
+// files that package needs: the Agent Plugins manifest, an MCP config pointing at the reduced
+// /mcp/chatgpt server (the repository root mcp.json points at the full /mcp server for Cursor and
+// other installs; the ZIP gets its own copy), the two skills that work with that tool set, the
+// icons the manifest references and the license.
 // No dependencies: the archive is written with node:zlib, with forward slash paths and a fixed
 // timestamp so the same sources always give the same bytes.
 
@@ -15,6 +17,7 @@ import { fileURLToPath } from "node:url";
 import { deflateRawSync } from "node:zlib";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const CHATGPT_URL = "https://www.creatorscompanion.app/mcp/chatgpt";
 
 // research-then-write is left out on purpose: it uses research tools that /mcp/chatgpt does not offer.
 const SKILLS = ["write-in-my-voice", "weekly-content-plan"];
@@ -45,6 +48,11 @@ if (mcp.$schema !== "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json") f
 const servers = Object.values(mcp.mcpServers ?? {});
 if (servers.length !== 1) fail("mcp.json must declare exactly one MCP server (plugin-level review test cases need one)");
 if (servers[0].type !== "streamable-http" || !/^https:\/\//.test(servers[0].url)) fail("the MCP server must be streamable-http over https");
+
+// The ZIP's mcp.json: the root config with the server switched to the ChatGPT endpoint.
+const zipMcp = structuredClone(mcp);
+for (const s of Object.values(zipMcp.mcpServers)) s.url = CHATGPT_URL;
+const overrides = new Map([["mcp.json", Buffer.from(JSON.stringify(zipMcp, null, 2) + "\n", "utf8")]]);
 
 const iface = manifest.extensions?.["com.openai"]?.interface ?? {};
 const files = new Set(["plugin.json", "mcp.json", "LICENSE"]);
@@ -86,7 +94,7 @@ const centrals = [];
 let offset = 0;
 for (const name of [...files].sort()) {
   if (name.includes("\\") || name.startsWith("/") || name.split("/").includes("..")) fail(`bad archive path ${name}`);
-  const data = read(name);
+  const data = overrides.get(name) ?? read(name);
   const packed = deflateRawSync(data, { level: 9 });
   const nameBuf = Buffer.from(name, "utf8");
   const crc = crc32(data);
@@ -143,5 +151,6 @@ mkdirSync(outDir, { recursive: true });
 const out = join(outDir, `${manifest.name}-openai-${manifest.version ?? "0.0.0"}.zip`);
 writeFileSync(out, Buffer.concat([...locals, centralBuf, end]));
 
+console.log(`MCP server in the ZIP: ${CHATGPT_URL}`);
 console.log(`Built ${out} (${statSync(out).size} bytes, ${files.size} files):`);
 for (const f of [...files].sort()) console.log(`  ${f}`);

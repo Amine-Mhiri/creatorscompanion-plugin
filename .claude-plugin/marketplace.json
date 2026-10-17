@@ -12,7 +12,11 @@
       "source": "./",
       "description": "Write social posts, scripts and newsletters in your own voice with your CreatorsCompanion account.",
       "category": "productivity",
-      "tags": ["content", "social-media", "creator"]
+      "tags": [
+        "content",
+        "social-media",
+        "creator"
+      ]
     }
   ]
 }

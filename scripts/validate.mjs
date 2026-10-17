@@ -50,12 +50,16 @@ const mk = doc[".claude-plugin/marketplace.json"];
 const cm = doc[".mcp.json"];
 if (cp) {
   if (!/^[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$/.test(cp.name ?? "")) err(".claude-plugin/plugin.json", "name must be lowercase letters, digits and hyphens");
-  for (const k of ["documentationUrl", "supportUrl", "privacyPolicyUrl", "termsOfServiceUrl"]) https(".claude-plugin/plugin.json", k, cp[k]);
+  // Claude Code 2.1.133 refuses these keys, so they live in docs/SUBMISSION-NOTES.md instead.
+  for (const k of ["displayName", "icon", "documentationUrl", "supportUrl", "privacyPolicyUrl", "termsOfServiceUrl"]) {
+    if (k in cp) err(".claude-plugin/plugin.json", `${k} breaks older Claude Code; paste it in the directory portal instead`);
+  }
 }
 if (mk && cp) {
   const entry = (mk.plugins ?? []).find((p) => p.name === cp.name);
   if (!entry) err(".claude-plugin/marketplace.json", `no entry named "${cp.name}"`);
   if (!mk.owner?.name) err(".claude-plugin/marketplace.json", "owner.name is required");
+  if (entry && "displayName" in entry) err(".claude-plugin/marketplace.json", "displayName in an entry breaks Claude Code 2.1.133");
 }
 if (cm) {
   for (const [k, s] of Object.entries(cm.mcpServers ?? {})) {
@@ -108,6 +112,7 @@ if (am) {
   for (const [k, s] of list) {
     if (s.type !== "streamable-http") err("mcp.json", `${k}.type must be streamable-http`);
     https("mcp.json", `${k}.url`, s.url);
+    if (s.url !== "https://www.creatorscompanion.app/mcp") err("mcp.json", `${k}.url must be the full server (build-openai-zip.mjs sets the ChatGPT URL inside the ZIP)`);
   }
 }
 

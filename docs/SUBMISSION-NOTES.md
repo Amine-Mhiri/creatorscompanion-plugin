@@ -10,15 +10,11 @@ These must be live first, because every listing links to them:
 
 1. The new `/connect` page with its `#support`, `#data-handling` and `#tools` sections (built in the
    app repository, not deployed when this was written).
-2. `/how-credits-work` as a real, plain informational page with no buy buttons. Today the URL serves
-   the app shell with `noindex`.
-3. The privacy policy section `/privacy#connected-apps` (ScrapeCreators, Apify, AI providers,
+2. The privacy policy section `/privacy#connected-apps` (ScrapeCreators, Apify, AI providers,
    retention).
-4. The `/mcp/chatgpt` endpoint with the reduced tool set (see the ChatGPT section), its own
-   protected resource metadata, and neutral insufficient-credit messages.
-5. The public GitHub repository `Amine-Mhiri/creatorscompanion-plugin` (Founder creates it and pushes
+3. The public GitHub repository `Amine-Mhiri/creatorscompanion-plugin` (Founder creates it and pushes
    this repository; nothing here was pushed).
-6. The reviewer account `reviewer@creatorscompanion.app` (persona Maya Torres) seeded with
+4. The reviewer account `reviewer@creatorscompanion.app` (persona Maya Torres) seeded with
    `engine/.e2e/mk-reviewer-account.mjs`. Its password stays in `ops/.reviewer-account` and is
    entered only in each portal's private credentials form.
 
@@ -140,8 +136,20 @@ Paste as is (founder: confirm the vendor sentence matches the ScrapeCreators and
 - **Repository:** `Amine-Mhiri/creatorscompanion-plugin`. **Plugin path:** leave empty (the plugin
   is the repository root). **Branch:** `main`.
 - **Validate**, then fix anything marked Blocking. Locally: `claude plugin validate .` and
-  `claude plugin validate .claude-plugin/plugin.json --strict` (needs Claude Code 2.1.281 or later).
-- **Listing details:** read from `.claude-plugin/plugin.json` and `README.md` (no extra fields).
+  `claude plugin validate .claude-plugin/plugin.json --strict` (`--strict` exists only on newer versions; on 2.1.133 run it without the flag).
+- **Listing details:** read from `.claude-plugin/plugin.json` and `README.md`. The directory
+  listing fields are deliberately not in `plugin.json`, because Claude Code 2.1.133 refuses the
+  manifest when they are there (and refuses `displayName` in a marketplace entry). If the portal
+  asks for them, paste:
+  - Display name: CreatorsCompanion
+  - Icon: `assets/logo512.png` (or https://www.creatorscompanion.app/logo512.png)
+  - Documentation URL: https://www.creatorscompanion.app/connect
+  - Support URL: https://www.creatorscompanion.app/connect#support
+  - Privacy policy URL: https://www.creatorscompanion.app/privacy
+  - Terms of service URL: https://www.creatorscompanion.app/terms
+  Once older Claude Code versions are no longer a concern, these can go back into `plugin.json`
+  as `displayName`, `icon`, `documentationUrl`, `supportUrl`, `privacyPolicyUrl` and
+  `termsOfServiceUrl` (accepted from Claude Code 2.1.281).
 - **Data handling answers:**
   - Reads or stores personal data: the plugin itself stores nothing; its connector reads and writes
     the user's own CreatorsCompanion profile and library (data handling statement above).
@@ -160,11 +168,13 @@ Paste as is (founder: confirm the vendor sentence matches the ScrapeCreators and
   with `plugin.json`, `mcp.json`, `LICENSE`, the two icons and the skills `write-in-my-voice` and
   `weekly-content-plan`. `research-then-write` is left out because `/mcp/chatgpt` has no research
   tools; the script fails if an included skill names one.
-- **Server in the ZIP:** https://www.creatorscompanion.app/mcp/chatgpt
-- **Tool set assumed for `/mcp/chatgpt`:** `get_account` (without plan upsell fields),
-  `estimate_cost`, `get_creator_profile`, `list_architectures`, `generate_content`,
-  `get_generation`, `list_library`, `get_library_item`, `save_to_library`, `delete_library_item`.
-  The test cases in `plugin.json` only use these. Recheck them against the deployed endpoint.
+- **Server in the ZIP:** https://www.creatorscompanion.app/mcp/chatgpt. The repository root
+  `mcp.json` points at the full server (`/mcp`) for Cursor and other Agent Plugins installs; the
+  build script writes a separate `mcp.json` with the ChatGPT URL into the ZIP only.
+- **Tools on `/mcp/chatgpt`:** `get_account` (without plan upsell fields), `estimate_cost`,
+  `get_creator_profile`, `list_architectures`, `generate_content`, `get_generation`,
+  `list_library`, `get_library_item`, `save_to_library`, `delete_library_item`. The test cases in
+  `plugin.json` only use these.
 - **Listing fields (already in `plugin.json`, imported on upload):**
   - displayName: CreatorsCompanion
   - shortDescription (26): Social posts in your voice
@@ -322,17 +332,13 @@ Places where the docs were ambiguous or where a choice was made; nothing below w
 6. **Positive case 5** lists `get_generation`, which only runs when a draft is still being written
    after the first call. The reviewer may not see it.
 7. **Cursor and other Agent Plugins clients** installing from this repository read the root
-   `plugin.json` and `mcp.json`, which point at `/mcp/chatgpt` with the reduced tool set (as
-   requested for the OpenAI package). Cursor users who want research tools can add the full server
-   with the one-click link in the README. If Cursor gets its own listing, build it with
-   `/mcp` instead.
-8. **Claude listing fields:** `displayName`, `icon`, `documentationUrl`, `supportUrl`,
-   `privacyPolicyUrl` and `termsOfServiceUrl` in `.claude-plugin/plugin.json` pass
-   `claude plugin validate` on Claude Code 2.1.302, but Claude Code 2.1.133 rejects them as
-   unrecognized keys. Current docs say unknown top-level keys are stripped at load time; very old
-   Claude Code versions were not tested for loading.
+   `plugin.json` and `mcp.json`, which point at the full server `/mcp`, and they also pick up all
+   three skills. The `extensions.com.openai` listing text in `plugin.json` describes the ChatGPT
+   package (no research tools); other clients ignore that namespace.
+8. **Claude listing fields** are kept out of `.claude-plugin/plugin.json` (see the plugin bundle
+   section) so the plugin validates and installs on both Claude Code 2.1.133 and 2.1.302.
 9. **Marketplace source:** the docs say `"."` means the marketplace root; `"./"` was used and passes
-   validation and a local install on Claude Code 2.1.302.
+   validation and a local install on Claude Code 2.1.133 and 2.1.302.
 10. **Gemini extension name** is expected to match the extension directory name. Installing from a
     git URL stores the extension under its manifest name, so `creatorscompanion` should work;
     confirm with a real `gemini extensions install` once the repository is public.

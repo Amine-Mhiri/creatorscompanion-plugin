@@ -1,6 +1,5 @@
 {
   "name": "creatorscompanion",
-  "displayName": "CreatorsCompanion",
   "version": "1.0.0",
   "description": "Write Reels and TikTok scripts, LinkedIn posts, X posts, newsletters and YouTube scripts in your own voice, plan your week from your library, and research what is working in your niche, using your CreatorsCompanion account.",
   "author": {
@@ -11,10 +10,15 @@
   "homepage": "https://www.creatorscompanion.app/connect",
   "repository": "https://github.com/Amine-Mhiri/creatorscompanion-plugin",
   "license": "MIT",
-  "keywords": ["content", "social-media", "reels", "tiktok", "linkedin", "newsletter", "youtube", "creator", "copywriting"],
-  "icon": "./assets/logo512.png",
-  "documentationUrl": "https://www.creatorscompanion.app/connect",
-  "supportUrl": "https://www.creatorscompanion.app/connect#support",
-  "privacyPolicyUrl": "https://www.creatorscompanion.app/privacy",
-  "termsOfServiceUrl": "https://www.creatorscompanion.app/terms"
+  "keywords": [
+    "content",
+    "social-media",
+    "reels",
+    "tiktok",
+    "linkedin",
+    "newsletter",
+    "youtube",
+    "creator",
+    "copywriting"
+  ]
 }
