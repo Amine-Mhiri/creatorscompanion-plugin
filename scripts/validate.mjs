@@ -51,9 +51,11 @@ const mk = doc[".claude-plugin/marketplace.json"];
 const cm = doc[".mcp.json"];
 if (cp) {
   if (!/^[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$/.test(cp.name ?? "")) err(".claude-plugin/plugin.json", "name must be lowercase letters, digits and hyphens");
-  // Claude Code 2.1.133 refuses these keys, so they live in docs/SUBMISSION-NOTES.md instead.
-  for (const k of ["displayName", "icon", "documentationUrl", "supportUrl", "privacyPolicyUrl", "termsOfServiceUrl"]) {
-    if (k in cp) err(".claude-plugin/plugin.json", `${k} breaks older Claude Code; paste it in the directory portal instead`);
+  // Listing keys the Claude directory reads. Claude Code 2.1.133 installs fine with them (tested
+  // 2026-10-17); only its strict validator warns. "icon" stays out: the icon is .claude-plugin/icon.png.
+  if ("icon" in cp) err(".claude-plugin/plugin.json", "use .claude-plugin/icon.png instead of an icon key");
+  for (const k of ["privacyPolicyUrl", "termsOfServiceUrl", "supportUrl", "documentationUrl"]) {
+    if (k in cp && !/^https://www.creatorscompanion.app//.test(cp[k])) err(".claude-plugin/plugin.json", `${k} must be a www.creatorscompanion.app URL`);
   }
 }
 if (mk && cp) {

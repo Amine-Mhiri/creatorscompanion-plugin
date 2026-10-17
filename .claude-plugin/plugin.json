@@ -20,5 +20,10 @@
     "youtube",
     "creator",
     "copywriting"
-  ]
+  ],
+  "displayName": "CreatorsCompanion",
+  "documentationUrl": "https://www.creatorscompanion.app/connect",
+  "supportUrl": "https://www.creatorscompanion.app/connect#support",
+  "privacyPolicyUrl": "https://www.creatorscompanion.app/privacy#connected-apps",
+  "termsOfServiceUrl": "https://www.creatorscompanion.app/terms"
 }
