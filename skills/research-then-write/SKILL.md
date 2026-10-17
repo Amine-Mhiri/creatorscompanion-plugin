@@ -44,7 +44,7 @@ it work. Ask which one to build on.
 - To keep a post for later, `save_inspiration` (free) with `job_id` and `post_key` (a viral search
   result) or `post_id` (a tracked creator's post), and a `note` such as "copy the cold open". It
   returns a `saved_key`. `unsave_inspiration` removes one.
-- For a video, `get_transcript` gives the spoken words when the structure matters: pass `job_id` and
+- For a video, `get_transcript` gives the spoken words when the structure matters: set `job_id` and
   `post_key`, or a `saved_key`. Confirm the cost first if it is not free.
 
 ## 3. Remake it as an original piece
@@ -56,8 +56,8 @@ it work. Ask which one to build on.
 3. Call `generate_content` with `remix` pointing at the post: `{ "saved_key": ... }`,
    `{ "job_id": ..., "post_key": ... }` or `{ "post_id": ... }`. A remix keeps that post's structure,
    writes new words in the user's voice and has no link fee. Put the user's angle and what to leave
-   behind in `instructions`. For a post found elsewhere, pass its link as `source_url` instead, or
-   pass the brief as `idea`.
+   behind in `instructions`. For a post found elsewhere, send its link as `source_url` instead, or
+   send the brief as `idea`.
 4. If you get a `job_id`, use `get_generation` until it is done.
 5. Once the remake is written, `save_inspiration` with the `saved_key` and `status: "used"` moves the
    original off the To remake list.

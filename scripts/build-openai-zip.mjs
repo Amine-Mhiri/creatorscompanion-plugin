@@ -54,10 +54,10 @@ const overrides = new Map([["mcp.json", Buffer.from(JSON.stringify(zipMcp, null,
 
 const iface = manifest.extensions?.["com.openai"]?.interface ?? {};
 const files = new Set(["plugin.json", "mcp.json", "LICENSE"]);
-for (const key of ["logo", "composerIcon", "logoDark", "composerIconDark"]) {
-  if (!iface[key]) continue;
-  const p = iface[key].replace(/^\.\//, "");
-  if (!existsSync(join(ROOT, p))) fail(`interface.${key} points at a missing file: ${iface[key]}`);
+for (const field of ["logo", "composerIcon", "logoDark", "composerIconDark"]) {
+  if (!iface[field]) continue;
+  const p = iface[field].replace(/^\.\//, "");
+  if (!existsSync(join(ROOT, p))) fail(`interface.${field} points at a missing file: ${iface[field]}`);
   files.add(p);
 }
 for (const s of SKILLS) {

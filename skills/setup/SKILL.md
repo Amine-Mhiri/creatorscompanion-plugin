@@ -39,7 +39,7 @@ Do not ask for anything else, such as their name or audience, unless the user of
 
 1. **Profile:** call `update_creator_profile` with the fields the answer gives: `bio` (one or two lines
    on who they help and how, in their words), `niche`, `audience`, `language` (a code or name, such as
-   `en`, `fr` or `es`), and `name` or `social_handles` if they mentioned them. Only the fields you pass
+   `en`, `fr` or `es`), and `name` or `social_handles` if they mentioned them. Only the fields you send
    change. Read back the fields it changed and the ones still `missing`.
 2. **Voice from pasted posts:** call `update_voice_examples` with the `format` the posts were written
    for (`tiktok` for Reels and TikTok scripts, `linkedin`, `twitter` for X, `youtube` or `newsletter`)

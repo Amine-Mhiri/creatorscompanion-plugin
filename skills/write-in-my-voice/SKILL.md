@@ -6,7 +6,7 @@ description: Draft a Reels or TikTok script, LinkedIn post, X post or thread, em
 # Write in my voice
 
 Use the CreatorsCompanion tools to write drafts that sound like the user. The voice comes from their
-saved profile, voice examples and Creator Brain, so do not imitate it yourself: pass the request to
+saved profile, voice examples and Creator Brain, so do not imitate it yourself: send the request to
 `generate_content`.
 
 If you do not know yet whether the account is set up, call `get_started` (free). When the profile is
@@ -24,7 +24,7 @@ Work out these, and ask one short question only if something is missing:
   the `format` and put the chosen keys in that entry's `architectures`. Otherwise leave it out and
   CreatorsCompanion picks one.
 - **Carousel look (optional).** For `instagram_carousel`, `list_carousel_styles` lists the styles;
-  pass the chosen slug as `carousel_style`. Leave it out for the house style.
+  send the chosen slug as `carousel_style`. Leave it out for the house style.
 - **Source, exactly one of:**
   - `idea`: the topic in the user's words.
   - `source_url`: a Reel, TikTok, YouTube video, post or article to write from (adds a small link fee).
@@ -58,9 +58,9 @@ Call `generate_content` with the confirmed `formats`, the one source, and `instr
   `get_generation` with that `job_id` until the status is `done`. Never call `generate_content` again
   for the same request while it runs.
 - An identical request made in the last few minutes is handed back at no cost (`replayed`). When the
-  user wants new versions of the same request, confirm the cost again and pass `fresh: true`.
+  user wants new versions of the same request, confirm the cost again and set `fresh: true`.
 - Failed drafts give their credits back automatically. Mention it if it happens.
-- A `tip` line means the profile or voice is thin: pass it on in one sentence and offer the setup skill.
+- A `tip` line means the profile or voice is thin: relay it in one sentence and offer the setup skill.
 
 ## 4. Present
 
@@ -74,7 +74,7 @@ credits left, as reported by the tool.
 ## 5. Edit on request (free)
 
 - Text changes to a draft: `update_draft` with the `draft_id` and only what changes: `title`, `body`,
-  `hooks`, `ctas`, `onscreen_hooks`, `caption` (LinkedIn and X drafts have options; pass `option` to
+  `hooks`, `ctas`, `onscreen_hooks`, `caption` (LinkedIn and X drafts have options; set `option` to
   edit one other than the first). Lists replace the whole list, in order.
 - Carousel slides: `edit_carousel` with the `draft_id` and `slides` (each by `number`, with the new
   `headline`, `subheadline`, `body`, `cta_action` or `cta_reward`), a new `caption` or a new
@@ -86,5 +86,5 @@ credits left, as reported by the tool.
 Ask whether to save any draft to their library, and which hook they want if there are several. On yes,
 call `save_to_library` with the `draft_id` and `hook` (its number, 1 for the first, or its text). The
 library tags its content pillar and funnel stage on its own. To save text the user wrote in the chat
-instead, pass `title`, `text` and `platform` (`instagram_tiktok`, `linkedin`, `twitter`, `email`,
+instead, set `title`, `text` and `platform` (`instagram_tiktok`, `linkedin`, `twitter`, `email`,
 `youtube` or `carousel`). Changes to an item already saved go through `update_library_item`.
