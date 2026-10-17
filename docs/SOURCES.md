@@ -27,6 +27,7 @@ question open, the question is written down in [SUBMISSION-NOTES.md](SUBMISSION-
 | ZIP and category checks | https://developers.openai.com/plugins/deploy/submission-errors | Allowed categories, archive rules (forward slashes, one plugin root at the archive root or one top-level folder, 100 MB), skill front matter rules, `plugin-name:skill-name` up to 64 characters. |
 | Content rules | https://developers.openai.com/plugins/plugin-guidelines | No pricing or promotions in listing text, no selling credits, informational pages only, explicit tool annotations. |
 | Packaging | https://developers.openai.com/plugins/build/plugins | `extensions.com.openai` in the root `plugin.json` replaces `.codex-plugin/plugin.json` settings; asset paths are `./`-relative. |
+| `extensions.com.openai.onboardingSkill` | https://developers.openai.com/plugins/build/plugins ("Add an onboarding skill") and the field reference in https://developers.openai.com/plugins/deploy/submission | Optional string, a `./`-relative path to an included skill's `SKILL.md` (the docs use `./skills/setup/SKILL.md`), directly under `extensions.com.openai`, not inside `interface`; setup runs it in a new conversation or in the one where the plugin was installed. |
 | Claude plugin conversion | https://developers.openai.com/plugins/guides/submit-claude-plugin | `.claude-plugin/plugin.json` is converted on upload when no Agent Plugins manifest is present. |
 | Skill format | https://agentskills.io/specification | `name` up to 64 lowercase characters and single hyphens, must match the folder; `description` up to 1024 characters. |
 
@@ -50,6 +51,7 @@ question open, the question is written down in [SUBMISSION-NOTES.md](SUBMISSION-
 | Fact | Source |
 | - | - |
 | Tool names, inputs and what each tool does | `supabase/functions/mcp/tools/*.ts` in the CreatorsCompanion app repository |
+| The 41 tools of `/mcp` and the 24 of `/mcp/chatgpt` (copied into `scripts/tools.mjs`) | `supabase/functions/mcp/server.ts` (`TOOLS`) and `supabase/functions/mcp/chatgpt.ts` (`CHATGPT_TOOLS`) |
 | Install one-liners and data handling wording | `src/pages/ConnectPage.tsx` (the /connect page) |
 | Reviewer persona (Maya Torres) and seeded library | `engine/.e2e/mk-reviewer-account.mjs` |
 | Distribution plan and channel requirements | `docs/v2/research/2026-10-17-mcp-distribution.md` |

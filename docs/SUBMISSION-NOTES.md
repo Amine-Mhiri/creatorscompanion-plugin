@@ -1,8 +1,13 @@
 # Submission notes
 
-What to paste where, channel by channel, and who does it. Nothing here has been submitted. "Us" means
-the engineering side (a Claude session or the founder at a terminal); "Founder" means it needs the
+What to paste where, channel by channel, and who does it. Nothing here has been submitted yet; the
+Claude directory connector form was filled in as a draft on 2026-10-17 (section 2). "Us" means the
+engineering side (a Claude session or the founder at a terminal); "Founder" means it needs the
 founder's own account, identity or payment.
+
+Current release: plugin 1.1.0 (connector v2). The full server `/mcp` serves 41 tools; the ChatGPT
+server `/mcp/chatgpt` serves 24 of them (no tool that reads social platforms or research data). The
+lists are in `scripts/tools.mjs`.
 
 ## Before any submission
 
@@ -38,24 +43,24 @@ Use these everywhere unless a channel section says otherwise.
   and YouTube scripts in your own voice, and research what works in your niche.
 - **Long description (full server):**
 
-  > CreatorsCompanion writes social content in your own voice, based on the profile you keep on
-  > CreatorsCompanion: Reels and TikTok scripts, LinkedIn posts, X posts and threads, email
-  > newsletters, YouTube scripts and Instagram carousels. Give it an idea or a link and it returns
-  > drafts that follow your bio, niche, audience and the voice examples you saved.
-  >
-  > It can also research what is working: find posts that outperformed in your niche on Instagram,
-  > TikTok and YouTube, pull a video's transcript, track creators and read their content pillars
-  > and top posts, and find creators in your niche worth watching. Your saved library is available
-  > too: list, read, save and delete items.
-  >
-  > Actions that use credits show their cost before they run, and you can estimate a request first.
-  > A connected app can never buy credits, change your plan or touch your billing.
-  >
-  > For creators, coaches, consultants and small brands with a CreatorsCompanion account. Drafts are
-  > suggestions to review before you post; it does not publish or schedule posts.
+  > CreatorsCompanion writes social content in your own voice: Reels and TikTok scripts, LinkedIn
+  > posts, X posts and threads, email newsletters, YouTube scripts and Instagram carousels. Give it an
+  > idea, a link to a video or post, or a viral post to remake, and it returns drafts with hooks,
+  > on-screen text, captions and calls to action, shown as a card you can save to your library. Set
+  > everything up inside the chat: tell it your niche and audience and paste a few of your posts, and
+  > it saves your profile and voice examples. You can also import your recent posts from Instagram,
+  > TikTok, YouTube, LinkedIn or X, and build a Creator Brain from your offers, story and proof so
+  > every draft stays on brand. Research what works: find posts that outperformed in your niche, pull
+  > a video's transcript, track creators and read their content pillars and top posts, see what your
+  > tracked creators posted lately, and find creators worth watching. Your library and saved
+  > inspiration are available too: list, read, edit, tag and delete. Actions that use credits state
+  > their cost, and you can estimate a request first. A connected app can never buy credits, change
+  > your plan or touch your billing.
+
+  The ChatGPT package has its own long description in `plugin.json` (no research, no voice import).
 
 - **Example prompts:**
-  1. Write a Reels script in my voice about why remote workers lose focus after lunch.
+  1. Set me up: I coach remote workers on focus, and here are two of my posts: <posts>
   2. Remake this viral Reel in my voice: <link to a Reel or TikTok>
   3. Find TikToks that went viral in my niche this month and tell me what made each one work.
   4. Plan five posts for this week from my profile and library, then draft the first one.
@@ -72,9 +77,10 @@ Paste as is (founder: confirm the vendor sentence matches the ScrapeCreators and
 > formats chosen or a library item id. We never receive the conversation history, memory or files of
 > the AI app.
 >
-> For the research tools (viral post search, transcripts, creator tracking, competitor search) and
-> for reading a link the user pastes, our servers fetch public posts and public profiles on
-> Instagram, TikTok and YouTube, and the public page at that link, through ScrapeCreators and Apify,
+> For the research tools (viral post search, transcripts, creator tracking, competitor search), for
+> importing the user's own recent posts as voice examples, and for reading a link the user pastes,
+> our servers fetch public posts and public profiles on Instagram, TikTok and YouTube (and LinkedIn
+> and X for voice import), and the public page at that link, through ScrapeCreators and Apify,
 > licensed third-party data APIs that we call server-side under our own accounts. Results are
 > returned as text and links. Drafts and post analysis are produced by AI models from OpenAI,
 > Anthropic and Google, which receive only the text needed for that step.
@@ -115,6 +121,10 @@ Paste as is (founder: confirm the vendor sentence matches the ScrapeCreators and
 **Who:** Founder submits from his paid claude.ai account at https://claude.ai/directory/manage,
 **Submit new > MCP connector**. Submit this before the plugin bundle and pair them.
 
+**Status:** filled in in the portal on 2026-10-17 by the orchestrator session and saved as a draft,
+not submitted. Before submitting, check the draft still matches the 1.1.0 copy below (long
+description, 41 tools) and finish the compliance acknowledgements.
+
 - **Connection:** https://www.creatorscompanion.app/mcp, auth type OAuth (DCR).
 - **Name:** CreatorsCompanion. **Slug:** `creatorscompanion` (permanent).
 - **One-liner (200 max):** the shared one-liner.
@@ -124,7 +134,7 @@ Paste as is (founder: confirm the vendor sentence matches the ScrapeCreators and
 - **Use cases:** the five shared example prompts (at least three required).
 - **Data handling:** choose "own API" for the service, and declare ScrapeCreators and Apify as
   third-party data sources; paste the data handling statement.
-- **Test & launch:** confirm every tool was run as a custom connector or in MCP Inspector.
+- **Test & launch:** confirm every tool (41) was run as a custom connector or in MCP Inspector.
 - **Compliance:** the seven acknowledgements are Founder's call.
 - **Authentication:** test account note; credentials in the private field.
 
@@ -164,17 +174,28 @@ Paste as is (founder: confirm the vendor sentence matches the ScrapeCreators and
 
 **Who:** Founder (OpenAI identity verification, upload, credentials, video, attestations); we build.
 
-- **Build:** `node scripts/build-openai-zip.mjs` writes `dist/creatorscompanion-openai-1.0.0.zip`
-  with `plugin.json`, `mcp.json`, `LICENSE`, the two icons and the skills `write-in-my-voice` and
-  `weekly-content-plan`. `research-then-write` is left out because `/mcp/chatgpt` has no research
-  tools; the script fails if an included skill names one.
+- **Build:** `node scripts/build-openai-zip.mjs` writes `dist/creatorscompanion-openai-1.1.0.zip`
+  with `plugin.json`, `mcp.json`, `LICENSE`, the two icons and the skills `setup`,
+  `write-in-my-voice` and `weekly-content-plan`. Their full-server-only steps (voice import from a
+  handle, remix of research items, analytics and the creator feed) sit between
+  `<!-- full-server -->` markers and are removed from the ZIP copy. `research-then-write` is left out
+  because `/mcp/chatgpt` has no research tools. The script fails if a packaged skill still names a
+  tool `/mcp/chatgpt` lacks or the `remix` argument (refused there).
+- **Onboarding skill:** `extensions.com.openai.onboardingSkill` is `./skills/setup/SKILL.md`
+  (documented at https://developers.openai.com/plugins/build/plugins, "Add an onboarding skill").
+  After uploading a test package, run setup in a fresh conversation and in one where the plugin was
+  just installed.
 - **Server in the ZIP:** https://www.creatorscompanion.app/mcp/chatgpt. The repository root
   `mcp.json` points at the full server (`/mcp`) for Cursor and other Agent Plugins installs; the
   build script writes a separate `mcp.json` with the ChatGPT URL into the ZIP only.
-- **Tools on `/mcp/chatgpt`:** `get_account` (without plan upsell fields), `estimate_cost`,
-  `get_creator_profile`, `list_architectures`, `generate_content`, `get_generation`,
-  `list_library`, `get_library_item`, `save_to_library`, `delete_library_item`. The test cases in
-  `plugin.json` only use these.
+- **Tools on `/mcp/chatgpt` (24):** `get_started`, `get_account` (without plan upsell fields),
+  `get_credit_history`, `estimate_cost`, `get_creator_profile`, `update_creator_profile`,
+  `get_voice`, `update_voice_examples`, `add_brain_document`, `build_creator_brain`,
+  `get_creator_brain`, `activate_creator_brain`, `list_architectures`, `list_carousel_styles`,
+  `generate_content` (refuses `remix`), `get_generation`, `edit_carousel`, `update_draft`,
+  `discard_draft`, `list_library`, `get_library_item`, `save_to_library`, `update_library_item`,
+  `delete_library_item`. The test cases in `plugin.json` only use these (`scripts/validate.mjs`
+  checks it).
 - **Listing fields (already in `plugin.json`, imported on upload):**
   - displayName: CreatorsCompanion
   - shortDescription (26): Social posts in your voice
@@ -187,7 +208,8 @@ Paste as is (founder: confirm the vendor sentence matches the ScrapeCreators and
   - defaultPrompt: the three in `plugin.json`
   - logo `./assets/logo512.png`, composerIcon `./assets/cc-icon-256.png`, brandColor #8B5CF6
 - **Review fields (in `plugin.json`):** 5 positive and 3 negative test cases for the reviewer
-  account, `commerce: false`, `commerce_description`, release notes. `demo_recording_url` is
+  account (the first positive case is onboarding: `get_started`, then `update_creator_profile` with
+  values that match the seeded persona, so the account stays as seeded), `commerce: false`, `commerce_description`, release notes. `demo_recording_url` is
   `TODO`: Founder records the walkthrough (sign in, the five positive cases), uploads it, and puts the
   URL in `plugin.json` before building the final ZIP.
 - **Steps:**
@@ -304,7 +326,7 @@ Draft to partnerships@github.com:
 
 **Who:** Founder (repository settings).
 
-- `gemini-extension.json` is already at the repository root, with the full server and the three
+- `gemini-extension.json` is already at the repository root, with the full server and the four
   skills.
 - After the repository is public, add the topic `gemini-cli-extension` in the repository's
   **About** settings. The gallery at https://geminicli.com/extensions crawls tagged repositories daily.
@@ -333,7 +355,7 @@ Places where the docs were ambiguous or where a choice was made; nothing below w
    after the first call. The reviewer may not see it.
 7. **Cursor and other Agent Plugins clients** installing from this repository read the root
    `plugin.json` and `mcp.json`, which point at the full server `/mcp`, and they also pick up all
-   three skills. The `extensions.com.openai` listing text in `plugin.json` describes the ChatGPT
+   four skills, full-server steps included. The `extensions.com.openai` listing text in `plugin.json` describes the ChatGPT
    package (no research tools); other clients ignore that namespace.
 8. **Claude listing fields** are kept out of `.claude-plugin/plugin.json` (see the plugin bundle
    section) so the plugin validates and installs on both Claude Code 2.1.133 and 2.1.302.
@@ -349,3 +371,9 @@ Places where the docs were ambiguous or where a choice was made; nothing below w
 13. **Vendor terms:** the data handling statement calls ScrapeCreators and Apify licensed
     third-party data APIs. The founder must confirm both vendors' terms allow this use inside AI
     clients before submitting.
+14. **Onboarding skill outside OpenAI:** only the OpenAI extension has an `onboardingSkill` field.
+    Claude Code, claude.ai and Gemini CLI load `setup` as an ordinary skill, triggered by its
+    description ("get started", "set me up") and by the server's `set_up_voice` prompt.
+15. **Positive case 1 writes to the reviewer account:** `update_creator_profile` saves niche, audience
+    and language. The prompt uses the seeded persona's own values so a rerun changes nothing that
+    matters; if the founder prefers a read-only first case, swap it for `get_started` alone.
