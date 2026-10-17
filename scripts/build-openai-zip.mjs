@@ -6,8 +6,8 @@
 // The ZIP holds the plugin root directly (plugin.json at the top of the archive), with only the
 // files that package needs: the Agent Plugins manifest, an MCP config pointing at the reduced
 // /mcp/chatgpt server (the repository root mcp.json points at the full /mcp server for Cursor and
-// other installs; the ZIP gets its own copy), the two skills that work with that tool set, the
-// icons the manifest references and the license.
+// other installs; the ZIP gets its own copy), the skills that work with that tool set (with their
+// full-server-only blocks removed, see tools.mjs), the icons the manifest references and the license.
 // No dependencies: the archive is written with node:zlib, with forward slash paths and a fixed
 // timestamp so the same sources always give the same bytes.
 
@@ -15,16 +15,14 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from "no
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { deflateRawSync } from "node:zlib";
+import { chatgptText, FULL_ONLY_TOOLS } from "./tools.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CHATGPT_URL = "https://www.creatorscompanion.app/mcp/chatgpt";
 
-// research-then-write is left out on purpose: it uses research tools that /mcp/chatgpt does not offer.
-const SKILLS = ["write-in-my-voice", "weekly-content-plan"];
-const EXCLUDED_TOOLS = [
-  "find_viral_posts", "load_more_viral", "get_viral_results", "get_transcript",
-  "track_creator", "list_tracked_creators", "get_creator_report", "find_competitors", "get_competitor_results",
-];
+// research-then-write is left out on purpose: it is built on research tools that /mcp/chatgpt does
+// not offer. The other skills mark their full-server-only parts, which are removed from the ZIP copy.
+const SKILLS = ["setup", "write-in-my-voice", "weekly-content-plan"];
 
 function fail(msg) {
   console.error(`build-openai-zip: ${msg}`);
@@ -65,11 +63,20 @@ for (const key of ["logo", "composerIcon", "logoDark", "composerIconDark"]) {
 for (const s of SKILLS) {
   const p = `skills/${s}/SKILL.md`;
   if (!existsSync(join(ROOT, p))) fail(`missing skill ${p}`);
-  const text = read(p).toString("utf8");
-  if (!text.startsWith("---\n") && !text.startsWith("---\r\n")) fail(`${p} has no YAML front matter`);
-  const used = EXCLUDED_TOOLS.filter((t) => text.includes(t));
-  if (used.length) fail(`${p} mentions tools that /mcp/chatgpt does not offer: ${used.join(", ")}`);
+  const source = read(p).toString("utf8");
+  if (!source.startsWith("---\n") && !source.startsWith("---\r\n")) fail(`${p} has no YAML front matter`);
+  const r = chatgptText(source);
+  if (r.error) fail(`${p}: ${r.error}`);
+  const used = FULL_ONLY_TOOLS.filter((t) => new RegExp(`\\b${t}\\b`).test(r.text));
+  if (used.length) fail(`${p} names tools that /mcp/chatgpt does not offer, outside a full-server block: ${used.join(", ")}`);
+  // generate_content refuses the remix argument on /mcp/chatgpt.
+  if (r.text.includes("`remix`")) fail(`${p} names the remix argument outside a full-server block`);
+  overrides.set(p, Buffer.from(r.text, "utf8"));
   files.add(p);
+}
+const onboarding = manifest.extensions?.["com.openai"]?.onboardingSkill;
+if (onboarding !== undefined && !files.has(String(onboarding).replace(/^\.\//, ""))) {
+  fail(`extensions.com.openai.onboardingSkill ${onboarding} is not a skill in the ZIP`);
 }
 
 // 2. Write the ZIP.

@@ -5,8 +5,8 @@
 CreatorsCompanion writes social content in your own voice: Reels and TikTok scripts, LinkedIn posts,
 X posts and threads, email newsletters, YouTube scripts and Instagram carousels. This repository
 connects your CreatorsCompanion account to your AI app through the CreatorsCompanion MCP server, and
-adds three skills that show the assistant how to use it well: check the cost first, ask before
-spending credits, and save what you like to your library.
+adds four skills that show the assistant how to use it well: set you up in the chat, check the cost
+first, ask before spending credits, and save what you like to your library.
 
 You need a CreatorsCompanion account. Sign up at https://www.creatorscompanion.app. Setup help for
 every app is at https://www.creatorscompanion.app/connect.
@@ -109,20 +109,50 @@ Then run `/mcp auth creatorscompanion` inside Gemini CLI to sign in.
 Search for CreatorsCompanion in the ChatGPT plugin directory once it is listed. Until then, follow
 the custom server steps at https://www.creatorscompanion.app/connect.
 
+## What it can do
+
+Version 1.1 (connector v2) puts most of the CreatorsCompanion studio inside the chat. The full server
+has 41 tools; the ChatGPT package uses the 24 that do not read social platforms.
+
+- **Setup in the chat.** Tell the assistant your niche, who you help and your language, and paste a
+  few of your posts. It saves your profile and voice examples without a trip to the website.
+  `get_started` shows in one call what is set up and what to do next.
+- **Voice import.** On the full server, list your recent posts on Instagram, TikTok, YouTube,
+  LinkedIn or X and import the ones that sound most like you as voice examples (100 credits, and it
+  replaces the examples saved for that format; the assistant asks first).
+- **Creator Brain.** Paste your offers, story, proof and FAQ, then build a Creator Brain: a checked
+  brief of who you are, your content pillars and voice rules that every draft follows.
+- **Drafts as a card.** In Claude and ChatGPT, drafts show inline as a card with hooks, on-screen
+  text, caption, script and carousel slides, with a Save button. Ask for changes and the assistant
+  edits the draft or the carousel slides in place, then saves it with the hook you picked.
+- **Library.** List (by platform, status, content pillar, funnel stage or title words), read, edit,
+  tag and delete your saved content.
+- **Research** (full server only). Find posts that outperformed in your niche, pull a video's
+  transcript, track creators and read their content pillars and top posts, see what your tracked
+  creators posted lately, find creators worth watching, keep posts as inspiration and remake one in
+  your voice with its structure kept. Your own connected accounts' numbers are there too.
+
+The full tool list is at https://www.creatorscompanion.app/connect#tools.
+
 ## What the skills do
 
+- **setup**: the onboarding skill. It calls `get_started`, asks at most three questions in one
+  message (your niche and who you help, your language, one to three of your posts or a handle), saves
+  your profile and voice examples, then offers a first draft. It never spends credits without a yes.
 - **write-in-my-voice**: drafts a Reels or TikTok script, LinkedIn post, X post or thread,
-  newsletter, YouTube script or carousel from your idea or a link. It checks the cost with
-  `estimate_cost`, asks you before it writes, and offers to save the result to your library.
-- **weekly-content-plan**: reads your profile and library, proposes a week of posts with a topic and
-  angle for each, and writes the ones you pick after you confirm the cost.
+  newsletter, YouTube script or carousel from your idea, a link or a saved post to remake. It checks
+  the cost with `estimate_cost`, asks you before it writes, edits the draft when you ask, and offers to
+  save it with the hook you picked.
+- **weekly-content-plan**: reads your profile, Creator Brain pillars and library (and, on the full
+  server, your analytics and your tracked creators' feed), proposes a week of posts across pillars and
+  funnel stages, and writes the ones you pick after you confirm the cost.
 - **research-then-write**: finds posts that are working in your niche, or looks at a creator's
-  recent posts, then writes an original piece in your voice that borrows the structure, not the
-  words. It asks before every step that uses credits.
+  recent posts, saves the best as inspiration, then remakes one as an original piece in your voice
+  that borrows the structure, not the words. It asks before every step that uses credits.
 
 The skills only orchestrate CreatorsCompanion tools. The ChatGPT package (built by
-`scripts/build-openai-zip.mjs`) includes the first two skills and a smaller tool set without the
-research tools.
+`scripts/build-openai-zip.mjs`) includes setup, write-in-my-voice and weekly-content-plan with their
+full-server-only steps removed, makes setup its onboarding skill, and leaves out research-then-write.
 
 ## Credits
 
@@ -146,11 +176,15 @@ privacy policy.
 
 ## For maintainers
 
-The two scripts in `scripts/` are run by hand by the maintainers and never by the plugin:
+The scripts in `scripts/` are run by hand by the maintainers and never by the plugin:
 
 - `node scripts/validate.mjs` checks every manifest (set `AJV_DIR` to a folder with ajv 8 installed
   to also check them against their published JSON Schemas).
-- `node scripts/build-openai-zip.mjs` builds the ChatGPT and Codex package into `dist/`.
+- `node scripts/build-openai-zip.mjs` builds the ChatGPT and Codex package into `dist/`. It removes
+  the parts of a skill between `<!-- full-server -->` and `<!-- /full-server -->`, and fails if a
+  packaged skill still names a tool that `/mcp/chatgpt` does not serve.
+- `scripts/tools.mjs` holds the tool lists both scripts check against (41 on `/mcp`, 24 on
+  `/mcp/chatgpt`). Update it when the server's tools change.
 
 Submission steps for each directory are in [docs/SUBMISSION-NOTES.md](docs/SUBMISSION-NOTES.md),
 and the documentation each file follows is in [docs/SOURCES.md](docs/SOURCES.md).

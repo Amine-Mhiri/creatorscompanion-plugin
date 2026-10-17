@@ -9,10 +9,11 @@
 // against their published JSON Schemas, downloaded at run time. Point AJV_DIR at a folder whose
 // node_modules holds ajv (and optionally ajv-formats) if it is not installed here.
 
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ALL_TOOLS, CHATGPT_TOOLS, chatgptText } from "./tools.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const errors = [];
@@ -103,6 +104,17 @@ if (ap) {
   (tc.negative ?? []).forEach((c, n) => {
     for (const k of ["description", "prompt"]) if (!c[k]) err(f, `negative[${n}].${k} is required`);
   });
+  // The review runs against /mcp/chatgpt: every triggered tool must be one it serves.
+  (tc.positive ?? []).forEach((c, n) => {
+    for (const t of String(c.tools_triggered ?? "").split(",").map((x) => x.trim()).filter(Boolean)) {
+      if (!CHATGPT_TOOLS.includes(t)) err(f, `positive[${n}] triggers ${t}, which /mcp/chatgpt does not serve`);
+    }
+  });
+  if (oa.onboardingSkill !== undefined) {
+    const p = String(oa.onboardingSkill);
+    if (!/^\.\/skills\/[a-z0-9-]+\/SKILL\.md$/.test(p)) err(f, "onboardingSkill must be a ./skills/<name>/SKILL.md path");
+    else if (!existsSync(join(ROOT, p))) err(f, `onboardingSkill points at a missing file: ${p}`);
+  }
   if (oa.review?.commerce !== false) err(f, "review.commerce must be false");
   for (const k of ["test_credentials", "reviewer_instructions"]) if (oa.review && k in oa.review) err(f, `review.${k} must not be in the package`);
 }
@@ -123,6 +135,10 @@ if (ge) {
   if (!ge.version) err("gemini-extension.json", "version is required");
   for (const [k, s] of Object.entries(ge.mcpServers ?? {})) https("gemini-extension.json", `mcpServers.${k}.httpUrl`, s.httpUrl);
 }
+
+// Plugin manifests release together (registry/server.json versions only its own metadata).
+const versions = { "plugin.json": ap?.version, ".claude-plugin/plugin.json": cp?.version, "gemini-extension.json": ge?.version };
+if (new Set(Object.values(versions)).size !== 1) err("plugin.json", `plugin manifest versions differ: ${JSON.stringify(versions)}`);
 
 // 5. MCP Registry server.json (manual checks; the schema check below is stricter).
 const sj = doc["registry/server.json"];
@@ -165,6 +181,12 @@ for (const dir of readdirSync(join(ROOT, "skills"))) {
   len(p, "description", fm.description, 1024);
   if (!m[2].trim()) err(p, "empty body");
   if (`${ap?.name}:${fm.name}`.length > 64) err(p, "plugin-name:skill-name is longer than 64 (OpenAI limit)");
+  const stripped = chatgptText(text);
+  if (stripped.error) err(p, stripped.error);
+  // A backticked name that looks like one of our tools (get_, list_, ...) must be a real tool.
+  for (const [, name] of m[2].matchAll(/`((?:get|list|find|load|save|unsave|update|delete|discard|edit|estimate|generate|track|untrack|import|add|build|activate)_[a-z_]+)`/g)) {
+    if (!ALL_TOOLS.includes(name)) err(p, `names an unknown tool ${name}`);
+  }
 }
 ok("skills front matter checked");
 
