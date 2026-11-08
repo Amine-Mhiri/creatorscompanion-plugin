@@ -1,0 +1,114 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "creatorscompanion",
+  "version": "1.2.4",
+  "description": "Write Reels and TikTok scripts, LinkedIn posts, X posts, newsletters, YouTube scripts and carousels in your own voice, set up your profile and voice from the chat, and manage your content library, using your CreatorsCompanion account.",
+  "author": {
+    "name": "CreatorsCompanion",
+    "email": "support@creatorscompanion.app",
+    "url": "https://www.creatorscompanion.app"
+  },
+  "homepage": "https://www.creatorscompanion.app/connect",
+  "repository": "https://github.com/Amine-Mhiri/creatorscompanion-plugin",
+  "license": "MIT",
+  "keywords": [
+    "content",
+    "social-media",
+    "reels",
+    "tiktok",
+    "linkedin",
+    "newsletter",
+    "youtube",
+    "creator",
+    "copywriting"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "CreatorsCompanion",
+        "shortDescription": "Social posts in your voice",
+        "longDescription": "CreatorsCompanion writes social content in your own voice: short video scripts for Reels and TikTok, LinkedIn posts, X posts and threads, email newsletters, YouTube scripts and Instagram carousels. Give it an idea or a link to a video or post, and it returns drafts with hooks, on-screen text, captions and calls to action, shown as a card you can save to your library.\n\nSet everything up inside the chat: tell it your niche and audience and paste a few of your posts, and it saves your profile and voice examples. Add your offers, story and proof to build a Creator Brain, so every draft stays on brand. Ask for changes to a draft or a carousel, then save it with the hook you picked. Your library is available too: list, read, edit, tag and delete items, and see where your credits went.\n\nIt is made for creators, coaches, consultants and small brands with a CreatorsCompanion account. You sign in with your own account, and the plugin only reads and writes your own profile, voice examples, Creator Brain and library. Writing drafts and building a Creator Brain use the credits already in your account; the assistant shows the cost and asks you before it runs. A connected app can never buy credits, change your plan or touch your billing.\n\nLimitations: it does not post to social networks, schedule posts, or edit images or video. Drafts are suggestions for you to review before you publish. The research tools on the website, such as viral post search, creator tracking and importing posts from your social accounts, are not part of this plugin.",
+        "developerName": "CreatorsCompanion",
+        "category": "Creativity",
+        "capabilities": [
+          "Set up your profile and voice in the chat",
+          "Write drafts in your voice",
+          "Build a Creator Brain",
+          "Edit and organize your content library"
+        ],
+        "websiteURL": "https://www.creatorscompanion.app/connect",
+        "supportURL": "https://www.creatorscompanion.app/connect#support",
+        "privacyPolicyURL": "https://www.creatorscompanion.app/privacy",
+        "termsOfServiceURL": "https://www.creatorscompanion.app/terms",
+        "defaultPrompt": [
+          "Set up my profile and voice, then write my first Reel.",
+          "Write a Reels script in my voice about my morning routine.",
+          "Plan five posts for this week from my profile and library, then draft the first one."
+        ],
+        "brandColor": "#8B5CF6",
+        "composerIcon": "./assets/cc-icon-256.png",
+        "logo": "./assets/logo512.png"
+      },
+      "onboardingSkill": "./skills/setup/SKILL.md",
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Onboarding: see what is set up, then save profile details from the chat.",
+              "prompt": "Help me get started. I coach remote workers on focus, my audience is remote employees and freelancers aged 25 to 45, and I post in English.",
+              "tools_triggered": "get_started, update_creator_profile",
+              "expected_behavior": "Calls get_started first and summarizes what is set up: credits, profile fields, voice examples, Creator Brain status and library. Then saves the niche, audience and language with update_creator_profile and confirms which fields changed and which, if any, are still missing. No credits are used."
+            },
+            {
+              "description": "Show the voice examples drafts are written from.",
+              "prompt": "Which of my own posts do my Reels drafts copy?",
+              "tools_triggered": "get_voice",
+              "expected_behavior": "Returns the Reels and TikTok voice examples and calls to action saved on the account, including the posts that open with \"You do not have a focus problem. You have a tab problem.\" and \"The best productivity tool I own is a door.\", and says where each one came from. No credits are used."
+            },
+            {
+              "description": "Find one library item and summarize it.",
+              "prompt": "Open my LinkedIn post about replacing status meetings and summarize it in three bullet points.",
+              "tools_triggered": "list_library, get_library_item",
+              "expected_behavior": "Finds the LinkedIn post in the library (list_library can filter by platform or title words), reads it in full, and gives a three bullet summary that only uses what the post says. No credits are used."
+            },
+            {
+              "description": "Estimate the cost of a request before anything is charged.",
+              "prompt": "How many credits would a Reels script and a LinkedIn post cost me right now?",
+              "tools_triggered": "estimate_cost",
+              "expected_behavior": "Returns the credits for each format and the total, and says whether the current balance and the daily limit cover it. Nothing is charged and no draft is created."
+            },
+            {
+              "description": "Write a draft in the creator's voice after confirming the cost, then save it with a chosen hook.",
+              "prompt": "Write a LinkedIn post in my voice about turning off Slack notifications during deep work, then save it to my library with the second hook.",
+              "tools_triggered": "estimate_cost, generate_content, get_generation, save_to_library",
+              "expected_behavior": "States the credit cost and asks for confirmation before writing. After the reviewer confirms, returns a LinkedIn draft about focus for remote workers in Maya's plain, practical voice, shown as a drafts card with its hooks, and reports the credits used and the credits left. Saves the draft to the library with the second hook as the chosen hook, and confirms it was saved. get_generation is only called if the draft is still running after the first call."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Purchases are not possible from the plugin.",
+              "prompt": "Buy 10,000 more credits for my CreatorsCompanion account.",
+              "expected_behavior": "No tool buys credits or changes the plan. The assistant explains that purchases cannot be made from here."
+            },
+            {
+              "description": "Publishing to social networks is not supported.",
+              "prompt": "Post my LinkedIn draft to my LinkedIn profile right now.",
+              "expected_behavior": "No tool posts anything. The assistant explains that the plugin writes and saves drafts but does not publish them."
+            },
+            {
+              "description": "Requests unrelated to content creation do not use the plugin.",
+              "prompt": "What will the weather be in Lisbon tomorrow?",
+              "expected_behavior": "No CreatorsCompanion tool is called."
+            }
+          ]
+        },
+        "demo_recording_url": "TODO",
+        "commerce": false,
+        "commerce_description": "The plugin does not sell products or process payments. It works with the user's existing CreatorsCompanion account and cannot buy credits, change plans or access billing."
+      },
+      "publication": {
+        "release_notes": "Versions 1.2.2 and 1.2.3: no change for users. Version 1.2.1: sign-in declared for ChatGPT (OAuth with dynamic client registration). Version 1.2.0: a welcome card that shows what is set up and the best next step, and editing your Creator Brain content pillars from the chat. Version 1.1.0: set up your profile and voice examples in the chat with a guided setup, build a Creator Brain from your offers, story and proof, see drafts as an inline card, edit drafts and carousels by asking, save with the hook you picked, edit and tag library items, and see your credit history."
+      }
+    }
+  }
+}

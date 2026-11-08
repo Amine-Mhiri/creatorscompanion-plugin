@@ -1,0 +1,25 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "app.creatorscompanion/creatorscompanion",
+  "title": "CreatorsCompanion",
+  "description": "Write Reels, TikTok, LinkedIn, X, YouTube and newsletter content in your own voice.",
+  "version": "1.0.0",
+  "websiteUrl": "https://www.creatorscompanion.app/connect",
+  "repository": {
+    "url": "https://github.com/Amine-Mhiri/creatorscompanion-plugin",
+    "source": "github"
+  },
+  "icons": [
+    {
+      "src": "https://www.creatorscompanion.app/logo512.png",
+      "mimeType": "image/png",
+      "sizes": ["1024x1024"]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://www.creatorscompanion.app/mcp"
+    }
+  ]
+}

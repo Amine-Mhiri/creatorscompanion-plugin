@@ -1,0 +1,21 @@
+# Build output (the ChatGPT ZIP is built, never committed)
+dist/
+
+# Dependencies
+node_modules/
+
+# MCP Registry publishing: keys and tokens never go in git
+*.pem
+.mcpregistry_*
+
+# Local secrets
+.env
+.env.*
+
+# OS and editor files (the Claude directory blocks these in a plugin folder)
+.DS_Store
+Thumbs.db
+desktop.ini
+__MACOSX/
+.vscode/
+.idea/
