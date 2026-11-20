@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "creatorscompanion",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Write Reels and TikTok scripts, LinkedIn posts, X posts, newsletters, YouTube scripts and carousels in your own voice, set up your profile and voice from the chat, and manage your content library, using your CreatorsCompanion account.",
   "author": {
     "name": "CreatorsCompanion",
